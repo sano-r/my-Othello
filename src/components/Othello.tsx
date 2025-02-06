@@ -2,8 +2,8 @@ import { useState } from "react";
 
 type Cell = "empty" | "black" | "white";
 
-export function Othello() {
-  const [board, setBoard] = useState<Cell[][]>([
+const resetBoard = (): Cell[][] => {
+  return [
     ["empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty"],
     ["empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty"],
     ["empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty"],
@@ -12,7 +12,11 @@ export function Othello() {
     ["empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty"],
     ["empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty"],
     ["empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty"],
-  ]);
+  ];
+};
+
+export function Othello() {
+  const [board, setBoard] = useState<Cell[][]>(resetBoard)
   const [turn, setTurn] = useState<Cell>("black");
 
   // 石が置ける場所があるか確認
@@ -137,6 +141,12 @@ export function Othello() {
     }
   };
 
+  // 初期状態に戻す 
+  function handleReset(): void{
+    setBoard(resetBoard());
+    setTurn("black");
+  };
+
   return (
     <div className="bg-green-700 p-4">
       <div className="grid grid-cols-8 gap-1">
@@ -155,6 +165,9 @@ export function Othello() {
           </div>
         ))}
       </div>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleReset}>
+      リセット
+      </button>
     </div>
   );
 }
