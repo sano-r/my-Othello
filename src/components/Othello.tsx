@@ -30,37 +30,37 @@ export function Othello() {
     }
     return false;
   };
-  
-  // これ何やっているか確認する
+
+  // 挟める石を判定
   const checkFlip = (board: Cell[][], row: number, col: number, turn: Cell): number[][] => {
-      const directions = [
-        [0, 1], [1, 1], [1, 0], [1, -1],
-        [0, -1], [-1, -1], [-1, 0], [-1, 1]
-      ];
-      const opponent = turn === "black" ? "white" : "black";
-      let flipped: number[][] = [];
-  
-      if (board[row][col] !== "empty") {
-          return [];
+    const directions = [
+      [0, 1], [1, 1], [1, 0], [1, -1],
+      [0, -1], [-1, -1], [-1, 0], [-1, 1]
+    ];
+    const opponent = turn === "black" ? "white" : "black";
+    let flipped: number[][] = [];
+
+    if (board[row][col] !== "empty") {
+      return [];
+    }
+
+    for (const [dx, dy] of directions) {
+      let r = row + dx;
+      let c = col + dy;
+      let currentFlipped: number[][] = [];
+
+      while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === opponent) {
+        currentFlipped.push([r, c]);
+        r += dx;
+        c += dy;
       }
-  
-      for (const [dx, dy] of directions) {
-        let r = row + dx;
-        let c = col + dy;
-        let currentFlipped: number[][] = [];
-  
-        while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === opponent) {
-          currentFlipped.push([r, c]);
-          r += dx;
-          c += dy;
-        }
-  
-        if (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === turn) {
-          flipped = flipped.concat(currentFlipped);
-        }
+
+      if (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === turn) {
+        flipped = flipped.concat(currentFlipped);
       }
-      return flipped;
-    };
+    }
+    return flipped;
+  };
 
   // ゲーム終了判定
   const isGameOver = (board: Cell[][]): boolean => {
@@ -71,6 +71,13 @@ export function Othello() {
     if (board[row][col] !== "empty") {
       return;
     }
+
+    const flipped = checkFlip(board, row, col, turn); // 挟める石の数を取得
+
+    if (flipped.length === 0) { // 挟める石が無い場合は何もしない
+      return;
+    }
+
     const newBoard = board.map((row) => [...row]);
     newBoard[row][col] = turn;
 
@@ -142,32 +149,43 @@ export function Othello() {
   };
 
   // 初期状態に戻す 
-  function handleReset(): void{
+  function handleReset(): void {
     setBoard(resetBoard());
     setTurn("black");
   };
 
   return (
-    <div className="bg-green-700 p-4">
-      <div className="grid grid-cols-8 gap-1">
-        {board.map((row, rowIndex) => (
-          <div key={rowIndex}>
-            {row.map((cell, colIndex) => (
-              <div
-                key={colIndex}
-                className={`w-16 h-16 border border-gray-300 flex items-center justify-center cursor-pointer
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">オセロゲーム</h1>
+      <div className="flex justify-center items-center">
+        <div className="bg-green-700 p-4 w-[50vw]">
+          <div className="grid grid-cols-8 gap-1">
+            {board.map((row, rowIndex) => (
+              <div key={rowIndex}>
+                {row.map((cell, colIndex) => (
+                  <div
+                    key={colIndex}
+                    className={`w-16 h-16 border border-gray-300 flex items-center justify-center cursor-pointer
                     ${cell === "black" ? "bg-black rounded-full" : ""}
                     ${cell === "white" ? "bg-white rounded-full" : ""}
                   `}
-                onClick={() => handleClick(rowIndex, colIndex)}
-              ></div>
+                    onClick={() => handleClick(rowIndex, colIndex)}
+                  ></div>
+                ))}
+              </div>
             ))}
           </div>
-        ))}
+        </div>
+        <div className="ml-2">
+          <div className={`p-2 mb-2 rounded-md border border-gray-700 ${turn === 'black' ? 'bg-black text-white' : 'bg-white text-black'}`}>
+            現在のターン
+          </div>
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleReset}>
+            リセット
+          </button>
+        </div>
       </div>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleReset}>
-      リセット
-      </button>
+      <br />
     </div>
   );
 }
