@@ -16,14 +16,17 @@ const resetBoard = (): Cell[][] => {
 };
 
 export function Othello() {
-  const [board, setBoard] = useState<Cell[][]>(resetBoard)
+  const [board, setBoard] = useState<Cell[][]>(resetBoard);
   const [turn, setTurn] = useState<Cell>("black");
 
   // 石が置ける場所があるか確認
   const canPlaceStone = (board: Cell[][], turn: Cell): boolean => {
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
-        if (board[i][j] === "empty" && checkFlip(board, i, j, turn).length > 0) {
+        if (
+          board[i][j] === "empty" &&
+          checkFlip(board, i, j, turn).length > 0
+        ) {
           return true;
         }
       }
@@ -32,10 +35,21 @@ export function Othello() {
   };
 
   // 挟める石を判定
-  const checkFlip = (board: Cell[][], row: number, col: number, turn: Cell): number[][] => {
+  const checkFlip = (
+    board: Cell[][],
+    row: number,
+    col: number,
+    turn: Cell
+  ): number[][] => {
     const directions = [
-      [0, 1], [1, 1], [1, 0], [1, -1],
-      [0, -1], [-1, -1], [-1, 0], [-1, 1]
+      [0, 1],
+      [1, 1],
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
     ];
     const opponent = turn === "black" ? "white" : "black";
     let flipped: number[][] = [];
@@ -47,7 +61,7 @@ export function Othello() {
     for (const [dx, dy] of directions) {
       let r = row + dx;
       let c = col + dy;
-      let currentFlipped: number[][] = [];
+      const currentFlipped: number[][] = [];
 
       while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === opponent) {
         currentFlipped.push([r, c]);
@@ -74,7 +88,8 @@ export function Othello() {
 
     const flipped = checkFlip(board, row, col, turn); // 挟める石の数を取得
 
-    if (flipped.length === 0) { // 挟める石が無い場合は何もしない
+    if (flipped.length === 0) {
+      // 挟める石が無い場合は何もしない
       return;
     }
 
@@ -83,16 +98,29 @@ export function Othello() {
 
     // ひっくり返すロジックを実装
     const directions = [
-      [0, 1], [1, 1], [1, 0], [1, -1],
-      [0, -1], [-1, -1], [-1, 0], [-1, 1]
+      [0, 1],
+      [1, 1],
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
     ];
 
     for (const [dx, dy] of directions) {
       let r = row + dx;
       let c = col + dy;
-      let flipped = [];
+      const flipped = [];
 
-      while (r >= 0 && r < 8 && c >= 0 && c < 8 && newBoard[r][c] !== "empty" && newBoard[r][c] !== turn) {
+      while (
+        r >= 0 &&
+        r < 8 &&
+        c >= 0 &&
+        c < 8 &&
+        newBoard[r][c] !== "empty" &&
+        newBoard[r][c] !== turn
+      ) {
         flipped.push([r, c]);
         r += dx;
         c += dy;
@@ -148,17 +176,17 @@ export function Othello() {
     }
   };
 
-  // 初期状態に戻す 
+  // 初期状態に戻す
   function handleReset(): void {
     setBoard(resetBoard());
     setTurn("black");
-  };
+  }
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">オセロゲーム</h1>
       <div className="flex justify-center items-center">
-        <div className="bg-green-700 p-4 w-[50vw]">
+        <div className="bg-green-700 p-4 max-w-4xl">
           <div className="grid grid-cols-8 gap-1">
             {board.map((row, rowIndex) => (
               <div key={rowIndex}>
@@ -177,10 +205,17 @@ export function Othello() {
           </div>
         </div>
         <div className="ml-2">
-          <div className={`p-2 mb-2 rounded-md border border-gray-700 ${turn === 'black' ? 'bg-black text-white' : 'bg-white text-black'}`}>
+          <div
+            className={`p-2 mb-2 rounded-md border border-gray-700 ${
+              turn === "black" ? "bg-black text-white" : "bg-white text-black"
+            }`}
+          >
             現在のターン
           </div>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleReset}>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={handleReset}
+          >
             リセット
           </button>
         </div>
